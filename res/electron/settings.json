@@ -1,0 +1,12 @@
+{
+    "browserWindow": { 
+        "show": false,
+        "fullscreen": true,
+        "webPreferences": {
+            "nativeWindowOpen": true,
+            "nodeIntegration": true,
+            "contextIsolation": false,
+            "enableRemoteModule": true
+        }
+     }
+}
