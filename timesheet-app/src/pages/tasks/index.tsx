@@ -1,4 +1,5 @@
 import List from "./List";
+import Show from "./Show";
 
 export default {
   options: {
@@ -6,4 +7,5 @@ export default {
     roles: ["administrator"],
   },
   list: List,
+  show: Show,
 };

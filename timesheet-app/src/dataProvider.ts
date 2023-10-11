@@ -54,27 +54,28 @@ const options = {}
 
 export const dataProvider: DataProvider = {
     getList: async (resource: string, params: ListParams) => {
-        const { page, perPage } = params.pagination;
-        const { field, order } = params.sort;
-        console.log({params});
-        
-        const query = {
-            sort: JSON.stringify([field, order]),
-            range: JSON.stringify([page * perPage, (page - 1) * perPage]),
-            filter: JSON.stringify(params.filter),
-        };
-        let url = `${apiUrl}/${resource}?${stringify(query)}`;
-        if (resource === "projects") {
-            url = `${apiUrl}/business/${businessId}/${resource}?${stringify(query)}`;
-        } else if (resource === "tasks") {
-            const { projectId } = params.meta
-            url = `${apiUrl}/business/${businessId}/projects/${projectId}/${resource}?${stringify(query)}`;
+        try {
+            const { page, perPage } = params.pagination;
+            const { field, order } = params.sort;
+            
+            const query = {
+                sort: JSON.stringify([field, order]),
+                range: JSON.stringify([page * perPage, (page - 1) * perPage]),
+                filter: JSON.stringify(params.filter),
+            };
+            let url = `${apiUrl}/${resource}?${stringify(query)}`;
+            if (resource === "projects") {
+                url = `${apiUrl}/business/${businessId}/${resource}?${stringify(query)}`;
+            } else if (resource === "tasks") {
+                const { projectId } = params.meta
+                url = `${apiUrl}/business/${businessId}/projects/${projectId}/${resource}?${stringify(query)}`;
+            }
+            const { json, headers } = await httpClient(url, { ...options, user });
+            return json
+        } catch (error) {
+            // localStorage.removeItem('user');
+            return Promise.reject("Failed");
         }
-        const { json, headers } = await httpClient(url, { ...options, user });
-        const contentRange = headers.get('content-range')?.split('/').pop() || "0";
-        console.log({ json });
-
-        return json
     },
 
     getOne: async (resource: any, params: { id: any; }) => {
