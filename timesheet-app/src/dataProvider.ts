@@ -39,22 +39,26 @@ interface DeleteManyParams<RecordType extends RaRecord = any> {
     ids: RecordType['id'][];
     meta?: any;
 }
-const userString = localStorage.getItem('user') || "";
-let token = "", businessId = "";
-if (userString) {
-    const userObj = JSON.parse(userString);
-    token = userObj.access_token;
-    businessId = userObj.user.uuid_business_id;
-} else {
-    Promise.reject("Something went wrong! Please login again");
-}
 
-const user = { token: `Bearer ${token}`, authenticated: !!token }
+const getHeaders = () => {
+    const userString = localStorage.getItem('user') || "";
+    let token = "", businessId = "";
+    if (userString) {
+        const userObj = JSON.parse(userString);
+        token = userObj.access_token;
+        businessId = userObj.user.uuid_business_id;
+    } else {
+        Promise.reject("Something went wrong! Please login again");
+    }
+    
+    return { user: {token: `Bearer ${token}`, authenticated: !!token }, businessId: businessId}
+}
 const options = {}
 
 export const dataProvider: DataProvider = {
     getList: async (resource: string, params: ListParams) => {
         try {
+            const { user, businessId } = getHeaders();
             const { page, perPage } = params.pagination;
             const { field, order } = params.sort;
             
@@ -79,7 +83,8 @@ export const dataProvider: DataProvider = {
     },
 
     getOne: async (resource: any, params: { id: any; }) => {
-        try {            
+        try {
+            const { user, businessId } = getHeaders(); 
             const url = `${apiUrl}/${resource}/${params.id}`
             const { json } = await httpClient(url, { ...options, user });
             return Promise.resolve(json);
@@ -89,6 +94,7 @@ export const dataProvider: DataProvider = {
     },
 
     getMany: async (resource: any, params: { ids: any; }) => {
+        const { user, businessId } = getHeaders();
         const query = {
             filter: JSON.stringify({ ids: params.ids }),
         };
@@ -98,6 +104,7 @@ export const dataProvider: DataProvider = {
     },
 
     getManyReference: async (resource: any, params: GetManyReferenceParams) => {
+        const { user, businessId } = getHeaders();
         const { page, perPage } = params.pagination;
         const { field, order } = params.sort;
         const query = {
@@ -118,6 +125,7 @@ export const dataProvider: DataProvider = {
     },
 
     create: async (resource: any, params: { data: any; }) => {
+        const { user, businessId } = getHeaders();
         const { json } = await httpClient(`${apiUrl}/${resource}`, {
             method: 'POST',
             body: JSON.stringify(params.data),
@@ -127,6 +135,7 @@ export const dataProvider: DataProvider = {
     },
 
     update: async (resource: any, params: { id: any; data: any; }) => {
+        const { user, businessId } = getHeaders();
         const url = `${apiUrl}/${resource}/${params.id}`;
         const { json } = await httpClient(url, {
             method: 'PUT',
@@ -137,6 +146,7 @@ export const dataProvider: DataProvider = {
     },
 
     updateMany: async (resource: any, params: { ids: any; data: any; }) => {
+        const { user, businessId } = getHeaders();
         const query = {
             filter: JSON.stringify({ id: params.ids }),
         };
@@ -150,6 +160,7 @@ export const dataProvider: DataProvider = {
     },
 
     delete: async (resource: any, params: { id: any; }) => {
+        const { user, businessId } = getHeaders();
         const url = `${apiUrl}/${resource}/${params.id}`;
         const { json } = await httpClient(url, {
             method: 'DELETE',
@@ -159,6 +170,7 @@ export const dataProvider: DataProvider = {
     },
 
     deleteMany: async (resource: any, params: DeleteManyParams) => {
+        const { user, businessId } = getHeaders();
         const query = {
             filter: JSON.stringify({ id: params.ids }),
         };

@@ -1,7 +1,9 @@
 {
     "browserWindow": { 
         "show": false,
-        "fullscreen": true,
+        "fullscreen": false,
+        "width": 1024,
+        "height": 768,
         "webPreferences": {
             "nativeWindowOpen": true,
             "nodeIntegration": true,

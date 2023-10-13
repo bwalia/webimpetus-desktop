@@ -6,11 +6,21 @@ import {
     Paper,
     Box,
 } from '@mui/material';
-import { DateField, Show as RaShow, RichTextField, TextField } from 'react-admin';
+import { DateField, Show as RaShow, RichTextField, TextField, useStore, useRecordContext } from 'react-admin';
+
+const TaskTitle = () => {
+    const record = useRecordContext();
+    // the record can be empty while loading
+    if (!record) return null;
+    return <span>{record.name}</span>;
+}
 
 const Show = () => {
     const [isTracking, setIsTracking] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
+    const [taskUUID, setTaskUUID] = useState('');
+    const [iseTimerStart, setTimerStart] = useStore('timer.start', {});
+    const [timer, setTimer] = useStore('timer.value', {});
 
     useEffect(() => {
         let timer: string | number | NodeJS.Timeout | undefined;
@@ -28,25 +38,41 @@ const Show = () => {
         };
     }, [isTracking]);
 
-    const startTracking = () => {
-        setIsTracking(true);
-    };
-
-    const pauseTracking = () => {
+    useEffect(() => {
         const url = window.location.href; // Get the current URL
         const parts = url.split('/'); // Split the URL by '/'
         const uuidIndex = parts.indexOf('tasks') + 1; // Find the index of 'tasks' and add 1 to get the UUID index
 
         if (uuidIndex !== 0 && uuidIndex < parts.length) {
             const uuid = parts[uuidIndex];
-            localStorage.setItem(uuid, JSON.stringify(elapsedTime));
+            setTaskUUID(uuid);
+            const previousTime = timer[uuid as keyof typeof timer] || '0';
+            setElapsedTime(parseInt(previousTime));
         }
-        setIsTracking(false);
+    }, []);
+
+    const startTracking = () => {
+        const previousTime = timer[taskUUID as keyof typeof timer] || '0';
+        !elapsedTime && setElapsedTime((prevTime) => prevTime + parseInt(previousTime));
+        setIsTracking(true);
+        setTimerStart(JSON.stringify({ 'time': Date.now(), 'uuid': taskUUID }));
     };
 
-    const stopTracking = () => {
+    const pauseTracking = () => {
+        const timeObj = {
+            [taskUUID]: elapsedTime
+        };
+        setTimer(timeObj);
+        setIsTracking(false);
+        setTimerStart({});
+    };
+
+    const finishTracking = () => {
+        const timeObj = {};
+        setTimer(timeObj);
         setIsTracking(false);
         setElapsedTime(0);
+        setTimerStart({});
     };
 
     const formatTime = (seconds: number) => {
@@ -55,8 +81,25 @@ const Show = () => {
         return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
 
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+
+    // device APIs are available
+    //
+    function onDeviceReady() {
+        // Register the event listener
+        document.addEventListener("backbutton", onBackKeyDown, false);
+    }
+
+    // Handle the back button
+    //
+    function onBackKeyDown() {
+        console.log("yeaaaaaahhhhhhh");
+
+    }
+
     return (
-        <RaShow>
+        <RaShow title={<TaskTitle />}>
             <Grid container spacing={2} marginBottom={3} padding={3}>
                 <Grid item xs={12} justifyContent={"center"} display={"flex"}>
                     <TextField source='name' variant='h4' />
@@ -91,8 +134,8 @@ const Show = () => {
                             <Button onClick={isTracking ? pauseTracking : startTracking} variant="contained" color={isTracking ? "secondary" : "primary"}>
                                 {isTracking ? 'Pause' : 'Start'}
                             </Button>
-                            <Button onClick={stopTracking} variant="outlined" color="primary" sx={{ float: "right" }}>
-                                Stop
+                            <Button onClick={finishTracking} variant="outlined" color="primary" sx={{ float: "right" }}>
+                                Finish
                             </Button>
                         </Box>
                     </Paper>
