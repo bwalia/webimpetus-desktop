@@ -19,8 +19,8 @@ const Show = () => {
     const [isTracking, setIsTracking] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [taskUUID, setTaskUUID] = useState('');
-    const [iseTimerStart, setTimerStart] = useStore('timer.start', {});
-    const [timer, setTimer] = useStore('timer.value', {});
+    const [iseTimerStart, setTimerStart] = useStore(`timer.start.${taskUUID}`, {});
+    const [timer, setTimer] = useStore(`timer.value.${taskUUID}`, {});
 
     useEffect(() => {
         let timer: string | number | NodeJS.Timeout | undefined;
@@ -49,13 +49,13 @@ const Show = () => {
             const previousTime = timer[uuid as keyof typeof timer] || '0';
             setElapsedTime(parseInt(previousTime));
         }
-    }, []);
+    }, [timer]);
 
     const startTracking = () => {
         const previousTime = timer[taskUUID as keyof typeof timer] || '0';
         !elapsedTime && setElapsedTime((prevTime) => prevTime + parseInt(previousTime));
         setIsTracking(true);
-        setTimerStart(JSON.stringify({ 'time': Date.now(), 'uuid': taskUUID }));
+        setTimerStart(JSON.stringify({[taskUUID]: {'time': Date.now(), 'uuid': taskUUID }}));
     };
 
     const pauseTracking = () => {
@@ -87,6 +87,7 @@ const Show = () => {
     // device APIs are available
     //
     function onDeviceReady() {
+        console.log("i'm ready");
         // Register the event listener
         document.addEventListener("backbutton", onBackKeyDown, false);
     }

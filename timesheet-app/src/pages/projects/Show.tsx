@@ -27,7 +27,7 @@ const MoneyField = (props: any) => {
 
 const PageTitle = () => {
     const record = useRecordContext();
-    return record.name
+    return record ? record.name : ""
 }
 
 const SearchTasks = () => {

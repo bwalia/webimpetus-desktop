@@ -6,7 +6,7 @@ const publicURL = import.meta.env.VITE_LOCAL_PUBLIC_URL;
  */
 export const authProvider: AuthProvider = {
   login: async ({ username, password }) => {
-    const request = new Request(`${publicURL}/auth/user_login`, {
+    const request = new Request(`${publicURL}/auth/employee_login`, {
       method: 'POST',
       body: JSON.stringify({ email: username, password: password }),
       headers: new Headers({ 'Content-Type': 'application/json' }),
