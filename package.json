@@ -18,7 +18,7 @@
     "cordova-browser": "^7.0.0",
     "cordova-electron": "^3.1.0",
     "cordova-plugin-dialogs": "^2.0.2",
-    "cordova-plugin-file": "^8.0.0"
+    "cordova-plugin-file": "^8.0.1"
   },
   "cordova": {
     "platforms": [
@@ -26,8 +26,8 @@
       "electron"
     ],
     "plugins": {
-      "cordova-plugin-file": {},
-      "cordova-plugin-dialogs": {}
+      "cordova-plugin-dialogs": {},
+      "cordova-plugin-file": {}
     }
   }
 }

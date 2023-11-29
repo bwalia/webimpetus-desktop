@@ -7,6 +7,7 @@ import {
     Box,
 } from '@mui/material';
 import { DateField, Show as RaShow, RichTextField, TextField, useStore, useRecordContext } from 'react-admin';
+import { IndexedDBService } from '../../store';
 
 const TaskTitle = () => {
     const record = useRecordContext();
@@ -51,11 +52,18 @@ const Show = () => {
         }
     }, [timer]);
 
-    const startTracking = () => {
+    const startTracking = async () => {
         const previousTime = timer[taskUUID as keyof typeof timer] || '0';
         !elapsedTime && setElapsedTime((prevTime) => prevTime + parseInt(previousTime));
         setIsTracking(true);
         setTimerStart(JSON.stringify({[taskUUID]: {'time': Date.now(), 'uuid': taskUUID }}));
+        const dbService = new IndexedDBService("timesheet", 1, "tasks");
+        const isTimeStarted = await dbService.getItem(taskUUID);
+        if (isTimeStarted) {
+            await dbService.updateItem({ id: taskUUID, startingDate: new Date, startingTime: elapsedTime });
+        } else {
+            await dbService.addItem({ id: taskUUID, startingDate: new Date, startingTime: Date.now() });
+        }
     };
 
     const pauseTracking = () => {
