@@ -81,6 +81,7 @@ export const dataProvider: DataProvider = {
             // localStorage.removeItem('user');
             if (error.status === 401) {
                 localStorage.removeItem("user");
+                window.location.reload();
             }
             return Promise.reject("Failed");
         }

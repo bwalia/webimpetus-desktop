@@ -6,7 +6,7 @@ const Menu = () => {
     const [taskUUID, setTaskUUID] = React.useState('');
     const [isTimerStart] = useStore(`timer.start.${taskUUID}`, {});
     const [sidebar, setSidebar] = useStore(`sidebar.open`, true);
-    const [isShow, setShow] = React.useState(true);
+    const [isShow] = useStore('menu.sidebar.show', true);
     React.useEffect(() => {
         const url = window.location.href; // Get the current URL
         const parts = url.split('/'); // Split the URL by '/'
@@ -17,11 +17,6 @@ const Menu = () => {
             setTaskUUID(uuid);
         }
     }, [taskUUID]);
-    React.useEffect(() => {
-        !isEmpty(isTimerStart) ? setShow(false) : setShow(true);
-        !isEmpty(isTimerStart) ? setSidebar(false) : setSidebar(true);
-
-    }, [isTimerStart]);
 
     return (
         <>
