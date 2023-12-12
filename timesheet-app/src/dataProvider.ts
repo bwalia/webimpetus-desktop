@@ -75,9 +75,14 @@ export const dataProvider: DataProvider = {
                 url = `${apiUrl}/business/${businessId}/projects/${projectId}/${resource}?${stringify(query)}`;
             }
             const { json, headers } = await httpClient(url, { ...options, user });
+            
             return json
-        } catch (error) {
+        } catch (error: any) {
             // localStorage.removeItem('user');
+            if (error.status === 401) {
+                localStorage.removeItem("user");
+                window.location.reload();
+            }
             return Promise.reject("Failed");
         }
     },

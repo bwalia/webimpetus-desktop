@@ -1,14 +1,23 @@
 import React from 'react'
 import { List as RaList, SimpleList, useStore } from 'react-admin';
 import { isEmpty } from 'lodash';
+import { IconButton } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+const BackButton = () => (
+  <IconButton aria-label="delete" onClick={() => history.back()}>
+    <ArrowBackIcon />
+  </IconButton>
+)
 const List = (props: any) => {
-  console.log({ props });
   const [project] = useStore('project');
-  console.log({project});
-  
+
   return (
-    <RaList {...props} queryOptions={{ meta: { projectId: project ? project.uuid : '' } }}>
+    <RaList
+      queryOptions={{ meta: { projectId: project ? project.uuid : '' } }}
+      {...props}
+    >
+      <BackButton />
       <SimpleList
         primaryText={record => record.name}
         secondaryText={record => `Added on ${new Date(record.created_at).toLocaleDateString()}`}

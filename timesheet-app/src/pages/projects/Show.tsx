@@ -9,7 +9,8 @@ import {
     useRedirect,
     useStore
 } from 'react-admin';
-import Button from '@mui/material/Button';
+import { IconButton, Button } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const MoneyField = (props: any) => {
     const record = useRecordContext();
@@ -27,7 +28,7 @@ const MoneyField = (props: any) => {
 
 const PageTitle = () => {
     const record = useRecordContext();
-    return record.name
+    return record ? record.name : ""
 }
 
 const SearchTasks = () => {
@@ -43,9 +44,16 @@ const SearchTasks = () => {
     )
 }
 
+const BackButton = () => (
+    <IconButton aria-label="delete" onClick={() => history.back()}>
+      <ArrowBackIcon />
+    </IconButton>
+  )
+
 const Show = (props: any) => {
     return (
         <RaShow title={<PageTitle />}>
+            <BackButton />
             <SimpleShowLayout>
                 <TextField source="name" />
                 <DateField label="Publication date" source="created_at" />
