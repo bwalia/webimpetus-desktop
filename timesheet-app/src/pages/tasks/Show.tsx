@@ -7,9 +7,18 @@ import {
     Box,
     IconButton
 } from '@mui/material';
-import { DateField, Show as RaShow, RichTextField, TextField, useStore, useRecordContext } from 'react-admin';
+import { 
+    DateField, 
+    Show as RaShow, 
+    RichTextField, 
+    TextField, 
+    useStore, 
+    useRecordContext 
+} from 'react-admin';
 import { IndexedDBService } from '../../store';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ConfirmationBox from '../../component/ConfirmationBox';
+import TaskDetailsBox from '../../component/TaskDetailsBox';
 
 const TaskTitle = () => {
     const record = useRecordContext();
@@ -26,6 +35,8 @@ const Show = () => {
     const [timer, setTimer] = useStore(`timer.value.${taskUUID}`, {});
     const [isMenuShow, setMenuShow] = useStore('menu.sidebar.show', true);
     const [sidebar, setSidebar] = useStore(`sidebar.open`, true);
+    const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
+    const [isDetailsDialogOpen, setDetailsDialogOpen] = useState(false);
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
@@ -85,37 +96,46 @@ const Show = () => {
         const dbService = new IndexedDBService("timesheet", 1, "tasks");
         const isTimeStarted = await dbService.getItem(taskUUID);
         if (isTimeStarted) {
-            await dbService.updateItem({ id: taskUUID, startingDate: new Date, startingTime: elapsedTime });
+            await dbService.updateItem({ id: taskUUID, startingDate: isTimeStarted.startingDate, startingTime: elapsedTime });
         } else {
             await dbService.addItem({ id: taskUUID, startingDate: new Date, startingTime: elapsedTime });
         }
     };
 
     const finishTracking = () => {
-        const timeObj = {};
-        setTimer(timeObj);
-        setIsTracking(false);
-        setElapsedTime(0);
-        setTimerStart({});
-        setMenuShow(true);
-        setSidebar(true);
+        setConfirmationDialogOpen(true);
+        // const timeObj = {};
+        // setTimer(timeObj);
+        // setIsTracking(false);
+        // setElapsedTime(0);
+        // setTimerStart({});
+        // setMenuShow(true);
+        // setSidebar(true);
     };
 
     document.addEventListener("deviceready", onDeviceReady, false);
-    // device APIs are available
-    //
     function onDeviceReady() {
         console.log("i'm ready");
-        // Register the event listener
         document.addEventListener("backbutton", onBackKeyDown, false);
     }
 
-    // Handle the back button
-    //
     function onBackKeyDown() {
         console.log("yeaaaaaahhhhhhh");
 
     }
+
+    const handleDetailsOpenDialog = () => {
+        setDetailsDialogOpen(true)
+    }
+
+    const handleDetailsCloseDialog = () => {
+        setDetailsDialogOpen(false);
+        setConfirmationDialogOpen(false);
+    };
+
+    const handleConfirmationCloseDialog = () => {
+        setConfirmationDialogOpen(false);
+    };
 
     return (
         <RaShow title={<TaskTitle />}>
@@ -158,13 +178,26 @@ const Show = () => {
                             <Button onClick={isTracking ? pauseTracking : startTracking} variant="contained" color={isTracking ? "secondary" : "primary"}>
                                 {isTracking ? 'Pause' : 'Start'}
                             </Button>
-                            <Button onClick={finishTracking} variant="outlined" color="primary" sx={{ float: "right" }}>
-                                Finish
-                            </Button>
+                            {!isTracking && (
+                                <Button onClick={finishTracking} variant="outlined" color="primary" sx={{ float: "right" }}>
+                                    Finish
+                                </Button>
+                            )}
                         </Box>
                     </Paper>
                 </Grid>
             </Grid>
+            <ConfirmationBox
+                isOpen={isConfirmationDialogOpen}
+                onClose={handleConfirmationCloseDialog}
+                innerText='Do you want to create an timeslip'
+                heading='Confirmation'
+                openDetails={handleDetailsOpenDialog}
+            />
+            <TaskDetailsBox
+                isOpen={isDetailsDialogOpen}
+                onClose={handleDetailsCloseDialog}
+            />
         </RaShow>
     );
 }
