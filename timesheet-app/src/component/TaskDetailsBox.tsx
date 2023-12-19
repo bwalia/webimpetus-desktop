@@ -6,16 +6,17 @@ import {
     DialogContentText,
     DialogActions,
     Button,
-    TextField
 } from '@mui/material';
 import { useRecordContext, useDataProvider } from 'react-admin';
 import TaskDetailsForm from './TaskDetailsForm';
+import { isEmpty } from 'lodash';
 
 interface DetailsDialogProps {
     isOpen: boolean;
     onClose: () => void;
+    removeSessionData: () => void;
 }
-const TaskDetailsBox: React.FC<DetailsDialogProps> = ({ isOpen, onClose }) => {
+const TaskDetailsBox: React.FC<DetailsDialogProps> = ({ isOpen, onClose, removeSessionData }) => {
     const record = useRecordContext();
     if (!record) return null;
     const dataProvider = useDataProvider();
@@ -35,12 +36,12 @@ const TaskDetailsBox: React.FC<DetailsDialogProps> = ({ isOpen, onClose }) => {
 
     const handleTaskSave = async () => {
         try {
-            const { data } = await dataProvider.create('timeslips', { data: formValues });
-        
-            // Handle success, e.g., show a success message or navigate to the new record
-            console.log('New Record Created:', data);
+            const data = await dataProvider.create('timeslips', { data: formValues });
+            if (!isEmpty(data)) {
+                removeSessionData();
+                onClose();
+            }
           } catch (error) {
-            // Handle error, e.g., show an error message
             console.error('Error creating record:', error);
           }
     }

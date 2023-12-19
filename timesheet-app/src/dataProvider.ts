@@ -136,7 +136,9 @@ export const dataProvider: DataProvider = {
             body: JSON.stringify(params.data),
             user
         })
-        return { data: json };
+        console.log({json});
+        
+        return { data: json.data };
     },
 
     update: async (resource: any, params: { id: any; data: any; }) => {
