@@ -73,8 +73,6 @@ export class IndexedDBService {
 
         return new Promise<Item | undefined>((resolve, reject) => {
             const request = store.get(id);
-            console.log({request, id});
-            
             request.onsuccess = (event) => {
                 resolve((event.target as IDBRequest).result as Item);
               };

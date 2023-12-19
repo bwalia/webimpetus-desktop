@@ -7,13 +7,13 @@ import {
     Box,
     IconButton
 } from '@mui/material';
-import { 
-    DateField, 
-    Show as RaShow, 
-    RichTextField, 
-    TextField, 
-    useStore, 
-    useRecordContext 
+import {
+    DateField,
+    Show as RaShow,
+    RichTextField,
+    TextField,
+    useStore,
+    useRecordContext
 } from 'react-admin';
 import { IndexedDBService } from '../../store';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -44,6 +44,19 @@ const Show = () => {
         return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
 
+    const secondsToHMS = (totalSeconds: number): string => {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        const formattedTime = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+        return formattedTime;
+    }
+
+    const padZero = (num: number): string => {
+        return num < 10 ? `0${num}` : num.toString();
+    }
+
     useEffect(() => {
         let timer: string | number | NodeJS.Timeout | undefined;
         if (isTracking) {
@@ -68,7 +81,6 @@ const Show = () => {
             setTaskUUID(uuid);
             const dbService = new IndexedDBService("timesheet", 1, "tasks");
             dbService.getItem(uuid).then(resultData => {
-                console.log({ resultData });
                 const previousTime = timer[uuid as keyof typeof timer] || resultData?.startingTime || '0';
                 setElapsedTime(parseInt(previousTime));
             })
@@ -173,7 +185,7 @@ const Show = () => {
                                 Time Tracker
                             </Typography>
                             <Typography variant="h4" textAlign={"center"}>
-                                {formatTime(elapsedTime)}
+                                {secondsToHMS(elapsedTime)}
                             </Typography>
                             <Button onClick={isTracking ? pauseTracking : startTracking} variant="contained" color={isTracking ? "secondary" : "primary"}>
                                 {isTracking ? 'Pause' : 'Start'}
