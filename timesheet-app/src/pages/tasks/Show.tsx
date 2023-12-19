@@ -22,7 +22,6 @@ import TaskDetailsBox from '../../component/TaskDetailsBox';
 
 const TaskTitle = () => {
     const record = useRecordContext();
-    // the record can be empty while loading
     if (!record) return null;
     return <span>{record.name}</span>;
 }
@@ -72,10 +71,9 @@ const Show = () => {
     }, [isTracking]);
 
     useEffect(() => {
-        const url = window.location.href; // Get the current URL
-        const parts = url.split('/'); // Split the URL by '/'
-        const uuidIndex = parts.indexOf('tasks') + 1; // Find the index of 'tasks' and add 1 to get the UUID index
-
+        const url = window.location.href;
+        const parts = url.split('/');
+        const uuidIndex = parts.indexOf('tasks') + 1;
         if (uuidIndex !== 0 && uuidIndex < parts.length) {
             const uuid = parts[uuidIndex];
             setTaskUUID(uuid);
@@ -116,14 +114,19 @@ const Show = () => {
 
     const finishTracking = () => {
         setConfirmationDialogOpen(true);
-        // const timeObj = {};
-        // setTimer(timeObj);
-        // setIsTracking(false);
-        // setElapsedTime(0);
-        // setTimerStart({});
-        // setMenuShow(true);
-        // setSidebar(true);
     };
+
+    const removeSessionData = async () => {
+        const timeObj = {};
+        setTimer(timeObj);
+        setIsTracking(false);
+        setElapsedTime(0);
+        setTimerStart({});
+        setMenuShow(true);
+        setSidebar(true);
+        const dbService = new IndexedDBService("timesheet", 1, "tasks");
+        await dbService.deleteItem(taskUUID);
+    }
 
     document.addEventListener("deviceready", onDeviceReady, false);
     function onDeviceReady() {
@@ -209,6 +212,7 @@ const Show = () => {
             <TaskDetailsBox
                 isOpen={isDetailsDialogOpen}
                 onClose={handleDetailsCloseDialog}
+                removeSessionData={removeSessionData}
             />
         </RaShow>
     );

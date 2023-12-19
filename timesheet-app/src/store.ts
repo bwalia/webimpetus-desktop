@@ -122,7 +122,7 @@ export class IndexedDBService {
         };
     }
 
-    async deleteItem(id: number): Promise<void> {
+    async deleteItem(id: string): Promise<void> {
         const db = await this.openDatabase();
         const transaction = db.transaction([this.tableName], "readwrite");
         const store = transaction.objectStore(this.tableName);
