@@ -53,6 +53,11 @@ const getHeaders = () => {
     
     return { user: {token: `Bearer ${token}`, authenticated: !!token }, businessId: businessId}
 }
+
+const isUUID = (str: string): boolean => {
+    const uuidPattern = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+    return uuidPattern.test(str);
+}
 const options = {}
 
 export const dataProvider: DataProvider = {
@@ -143,7 +148,10 @@ export const dataProvider: DataProvider = {
 
     update: async (resource: any, params: { id: any; data: any; }) => {
         const { user, businessId } = getHeaders();
-        const url = `${apiUrl}/${resource}/${params.id}`;
+        let url = `${apiUrl}/${resource}/${params.id}`;
+        if (isUUID(resource)) {
+            url = `${apiUrl}/business/${businessId}/projects/${resource}/tasks/update-status`
+        }
         const { json } = await httpClient(url, {
             method: 'PUT',
             body: JSON.stringify(params.data),

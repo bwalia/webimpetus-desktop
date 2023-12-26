@@ -13,12 +13,14 @@ import {
     RichTextField,
     TextField,
     useStore,
-    useRecordContext
+    useRecordContext,
+    useNotify
 } from 'react-admin';
 import { IndexedDBService } from '../../store';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ConfirmationBox from '../../component/ConfirmationBox';
 import TaskDetailsBox from '../../component/TaskDetailsBox';
+import dataProvider from '../../dataProvider';
 
 const TaskTitle = () => {
     const record = useRecordContext();
@@ -36,6 +38,7 @@ const Show = () => {
     const [sidebar, setSidebar] = useStore(`sidebar.open`, true);
     const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
     const [isDetailsDialogOpen, setDetailsDialogOpen] = useState(false);
+    const notify = useNotify();
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
@@ -126,6 +129,12 @@ const Show = () => {
         setSidebar(true);
         const dbService = new IndexedDBService("timesheet", 1, "tasks");
         await dbService.deleteItem(taskUUID);
+        await dataProvider.update(taskUUID, {
+            id: taskUUID,
+            data: { status: "inReview" },
+            previousData: {}
+        });
+        notify('Record updated successfully');
     }
 
     document.addEventListener("deviceready", onDeviceReady, false);
@@ -190,7 +199,12 @@ const Show = () => {
                             <Typography variant="h4" textAlign={"center"}>
                                 {secondsToHMS(elapsedTime)}
                             </Typography>
-                            <Button onClick={isTracking ? pauseTracking : startTracking} variant="contained" color={isTracking ? "secondary" : "primary"}>
+                            <Button 
+                                onClick={isTracking ? pauseTracking : startTracking} 
+                                variant="contained" 
+                                color={isTracking ? "secondary" : "primary"}
+                                sx={ isTracking ? {margin: 'auto', display: 'flex'} : {}}
+                            >
                                 {isTracking ? 'Pause' : 'Start'}
                             </Button>
                             {!isTracking && (
