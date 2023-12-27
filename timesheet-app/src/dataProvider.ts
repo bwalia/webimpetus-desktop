@@ -42,16 +42,17 @@ interface DeleteManyParams<RecordType extends RaRecord = any> {
 
 const getHeaders = () => {
     const userString = localStorage.getItem('user') || "";
-    let token = "", businessId = "";
+    let token = "", businessId = "", empId = "";
     if (userString) {
         const userObj = JSON.parse(userString);
         token = userObj.access_token;
         businessId = userObj.user.uuid_business_id;
+        empId = userObj.user.id;
     } else {
         Promise.reject("Something went wrong! Please login again");
     }
     
-    return { user: {token: `Bearer ${token}`, authenticated: !!token }, businessId: businessId}
+    return { user: {token: `Bearer ${token}`, authenticated: !!token }, businessId: businessId, empId: empId}
 }
 
 const isUUID = (str: string): boolean => {
@@ -63,7 +64,7 @@ const options = {}
 export const dataProvider: DataProvider = {
     getList: async (resource: string, params: ListParams) => {
         try {
-            const { user, businessId } = getHeaders();
+            const { user, businessId, empId } = getHeaders();
             const { page, perPage } = params.pagination;
             const { field, order } = params.sort;
             
@@ -77,7 +78,9 @@ export const dataProvider: DataProvider = {
                 url = `${apiUrl}/business/${businessId}/${resource}?${stringify(query)}`;
             } else if (resource === "tasks") {
                 const { projectId } = params.meta
-                url = `${apiUrl}/business/${businessId}/projects/${projectId}/${resource}?${stringify(query)}`;
+                url = `${apiUrl}/business/${businessId}/projects/${projectId}/employee/${empId}/${resource}?${stringify(query)}`;
+            } else if (isUUID(resource)) {
+                url = `${apiUrl}/business/${businessId}/employee/${empId}/tasks/${resource}/timeslip`
             }
             const { json, headers } = await httpClient(url, { ...options, user });
             

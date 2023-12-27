@@ -17,9 +17,10 @@ interface DetailsDialogProps {
     removeSessionData: () => void;
 }
 const TaskDetailsBox: React.FC<DetailsDialogProps> = ({ isOpen, onClose, removeSessionData }) => {
-    const record = useRecordContext();
-    if (!record) return null;
+    const record = useRecordContext();    
     const dataProvider = useDataProvider();
+    // if (!record) return <></>;
+
 
     const [formValues, setFormValues] = React.useState({
         task_id: '',

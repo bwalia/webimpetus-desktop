@@ -25,7 +25,7 @@ const List = (props: any) => {
 
   return (
     <RaList
-      queryOptions={{ meta: { projectId: project ? project.uuid : '' } }}
+      queryOptions={{ meta: { projectId: project ? project.uuid : '0' } }}
       {...props}
     >
       <BackButton />

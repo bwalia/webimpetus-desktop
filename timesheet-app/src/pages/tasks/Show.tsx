@@ -25,13 +25,14 @@ import dataProvider from '../../dataProvider';
 const TaskTitle = () => {
     const record = useRecordContext();
     if (!record) return null;
-    return <span>{record.name}</span>;
+    return <span>{record?.name || "Tasks"}</span>;
 }
 
 const Show = () => {
     const [isTracking, setIsTracking] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [taskUUID, setTaskUUID] = useState('');
+    const [timeslipRecords, setTimeslipRecords] = useState({});
     const [iseTimerStart, setTimerStart] = useStore(`timer.start.${taskUUID}`, {});
     const [timer, setTimer] = useStore(`timer.value.${taskUUID}`, {});
     const [isMenuShow, setMenuShow] = useStore('menu.sidebar.show', true);
@@ -39,25 +40,6 @@ const Show = () => {
     const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
     const [isDetailsDialogOpen, setDetailsDialogOpen] = useState(false);
     const notify = useNotify();
-
-    const formatTime = (seconds: number) => {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-    };
-
-    const secondsToHMS = (totalSeconds: number): string => {
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
-        const formattedTime = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
-        return formattedTime;
-    }
-
-    const padZero = (num: number): string => {
-        return num < 10 ? `0${num}` : num.toString();
-    }
 
     useEffect(() => {
         let timer: string | number | NodeJS.Timeout | undefined;
@@ -87,6 +69,38 @@ const Show = () => {
             })
         }
     }, [timer]);
+
+    useEffect(() => {
+        if (taskUUID) {
+            dataProvider.getList(taskUUID, {
+                pagination: {page: 1, perPage: 1000},
+                sort: {field: "name", order: 'ASC'},
+                filter: {}
+            }).then((timeslip: any) => {
+                console.log({timeslip});
+                setTimeslipRecords(timeslip?.data);
+            });
+        }
+    }, [taskUUID])
+
+    const formatTime = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    };
+
+    const secondsToHMS = (totalSeconds: number): string => {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        const formattedTime = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+        return formattedTime;
+    }
+
+    const padZero = (num: number): string => {
+        return num < 10 ? `0${num}` : num.toString();
+    }
 
     const startTracking = async () => {
         const previousTime = timer[taskUUID as keyof typeof timer] || '0';
@@ -131,7 +145,10 @@ const Show = () => {
         await dbService.deleteItem(taskUUID);
         await dataProvider.update(taskUUID, {
             id: taskUUID,
-            data: { status: "inReview" },
+            data: { 
+                status: "inReview",
+                id: taskUUID
+            },
             previousData: {}
         });
         notify('Record updated successfully');
@@ -185,8 +202,22 @@ const Show = () => {
                     <DateField source='end_date' variant='h6' transform={(value: number) => new Date(value * 1000)} />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant='body1'>Task Description</Typography>
-                    <RichTextField source='description' variant='h6' />
+                    {timeslipRecords instanceof Array && timeslipRecords?.map((timeslip: any) => (
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <Typography variant='body1'>Previously Spent Time</Typography>
+                                <Typography variant='body1'>{timeslip?.slip_hours}</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Typography variant='body1'>Timesheet ID</Typography>
+                                <Typography variant='body1'>{timeslip?.id}</Typography>
+                            </Grid>
+                        </Grid>
+                    ))}
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography variant='h6'>Task Description</Typography>
+                    <RichTextField source='description' variant='body1' />
                 </Grid>
             </Grid>
             <Grid container justifyContent="center">
