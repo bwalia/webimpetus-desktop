@@ -63,7 +63,7 @@ const TaskDetailsForm: React.FC<TaskDetailsFormProps> = ({ record, formValues, s
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
 
-        const formattedTime = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+        const formattedTime = `${padZero(hours)}.${padZero(minutes)}`;
         return formattedTime;
     }
 

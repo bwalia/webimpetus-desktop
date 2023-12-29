@@ -1,5 +1,6 @@
 import List from "./List";
 import Show from "./Show";
+import './task.css';
 
 export default {
   options: {

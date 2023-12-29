@@ -1,0 +1,7 @@
+.tertiary-text {
+    float: right;
+    opacity: 0.68;
+    display: flex;
+    flex-direction: column;
+    text-transform: capitalize;
+}

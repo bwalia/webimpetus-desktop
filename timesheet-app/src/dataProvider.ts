@@ -42,23 +42,29 @@ interface DeleteManyParams<RecordType extends RaRecord = any> {
 
 const getHeaders = () => {
     const userString = localStorage.getItem('user') || "";
-    let token = "", businessId = "";
+    let token = "", businessId = "", empId = "";
     if (userString) {
         const userObj = JSON.parse(userString);
         token = userObj.access_token;
         businessId = userObj.user.uuid_business_id;
+        empId = userObj.user.id;
     } else {
         Promise.reject("Something went wrong! Please login again");
     }
     
-    return { user: {token: `Bearer ${token}`, authenticated: !!token }, businessId: businessId}
+    return { user: {token: `Bearer ${token}`, authenticated: !!token }, businessId: businessId, empId: empId}
+}
+
+const isUUID = (str: string): boolean => {
+    const uuidPattern = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+    return uuidPattern.test(str);
 }
 const options = {}
 
 export const dataProvider: DataProvider = {
     getList: async (resource: string, params: ListParams) => {
         try {
-            const { user, businessId } = getHeaders();
+            const { user, businessId, empId } = getHeaders();
             const { page, perPage } = params.pagination;
             const { field, order } = params.sort;
             
@@ -72,7 +78,9 @@ export const dataProvider: DataProvider = {
                 url = `${apiUrl}/business/${businessId}/${resource}?${stringify(query)}`;
             } else if (resource === "tasks") {
                 const { projectId } = params.meta
-                url = `${apiUrl}/business/${businessId}/projects/${projectId}/${resource}?${stringify(query)}`;
+                url = `${apiUrl}/business/${businessId}/projects/${projectId}/employee/${empId}/${resource}?${stringify(query)}`;
+            } else if (isUUID(resource)) {
+                url = `${apiUrl}/business/${businessId}/employee/${empId}/tasks/${resource}/timeslip`
             }
             const { json, headers } = await httpClient(url, { ...options, user });
             
@@ -143,7 +151,10 @@ export const dataProvider: DataProvider = {
 
     update: async (resource: any, params: { id: any; data: any; }) => {
         const { user, businessId } = getHeaders();
-        const url = `${apiUrl}/${resource}/${params.id}`;
+        let url = `${apiUrl}/${resource}/${params.id}`;
+        if (isUUID(resource)) {
+            url = `${apiUrl}/business/${businessId}/projects/${resource}/tasks/update-status`
+        }
         const { json } = await httpClient(url, {
             method: 'PUT',
             body: JSON.stringify(params.data),
