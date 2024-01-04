@@ -1,0 +1,9 @@
+.MuiToolbar-root.MuiToolbar-dense .RaAppBar-menuButton {
+    color: rgba(0, 0, 0, 0.54);
+}
+.MuiToolbar-root.MuiToolbar-dense .RaLoadingIndicator-loadedIcon {
+    color: rgba(0, 0, 0, 0.54);
+}
+.MuiToolbar-root.MuiToolbar-dense div .MuiIconButton-root {
+    color: rgba(0, 0, 0, 0.54);
+}

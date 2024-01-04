@@ -256,8 +256,8 @@ a {
     align-items: center;
     justify-content: space-between;
     height: 160px;
-    padding: 12px 30px;
-    background: rgba(255, 255, 255, .12);
+    padding: 12px 5px;
+    background: rgb(0 0 0 / 55%);
     font-size: 26px;
     letter-spacing: 1px;
 }
