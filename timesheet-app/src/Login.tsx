@@ -4,8 +4,6 @@ import {
     Button,
     CssBaseline,
     TextField,
-    FormControlLabel,
-    Checkbox,
     Link,
     Paper,
     Box,
@@ -13,16 +11,15 @@ import {
     Typography,
 } from '@mui/material';
 
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useLogin, useNotify, Notification } from 'react-admin';
+import { useLogin, useNotify } from 'react-admin';
 
 function Copyright(props: any) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
-                Your Website
+            <Link color="inherit" href="https://test-my.workstation.co.uk/">
+                Workstation
             </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -66,7 +63,7 @@ const Login = ({ }) => {
                         backgroundPosition: 'center',
                     }}
                 />
-                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square sx={{bgcolor: '#efefef'}}>
                     <Box
                         sx={{
                             my: 8,
@@ -108,7 +105,7 @@ const Login = ({ }) => {
                                 type="submit"
                                 fullWidth
                                 variant="contained"
-                                sx={{ mt: 3, mb: 2, bgcolor: '#ff004e' }}
+                                sx={{ mt: 3, mb: 2, bgcolor: '#ff004e', ":hover": {bgcolor: '#aa0b3b'} }}
                             >
                                 Sign In
                             </Button>

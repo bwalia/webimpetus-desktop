@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import dataProvider from '../dataProvider';
 
-const DashboardHeader = () => {
+const DashboardHeader = (_props: any) => {
     const [empName, setEmpName] = useState('');
-    const [taskStatus, setTaskStatus] = useState({assigned: 0, inReview: 0, completed: 0});
     const userString = localStorage.getItem('user') || "";
+    const [taskStatus, setTaskStatus] = useState({assigned: 0, inReview: 0, completed: 0});
     useEffect(() => {
         let token = "", businessId = "", empId = "";
         if (userString) {
@@ -17,16 +16,11 @@ const DashboardHeader = () => {
             Promise.reject("Something went wrong! Please login again");
         }
     }, [userString]);
+
     useEffect(() => {
-            dataProvider.getList("tasks-status", {
-                pagination: {page: 1, perPage: 1000},
-                sort: {field: "name", order: 'ASC'},
-                filter: {}
-            }).then((taskStatus: any) => {
-                console.log({taskStatus});
-                setTaskStatus(taskStatus?.data);
-            });
-    }, [])
+        setTaskStatus(_props?.taskStatus);
+    }, [_props]);
+    
     return (
         <div className="main-header">
             <div className="main-header__intro-wrapper">
