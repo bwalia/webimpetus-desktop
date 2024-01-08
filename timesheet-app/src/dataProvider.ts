@@ -81,6 +81,8 @@ export const dataProvider: DataProvider = {
                 url = `${apiUrl}/business/${businessId}/projects/${projectId}/employee/${empId}/${resource}?${stringify(query)}`;
             } else if (isUUID(resource)) {
                 url = `${apiUrl}/business/${businessId}/employee/${empId}/tasks/${resource}/timeslip`
+            } else if (resource == "tasks-status") {
+                url = `${apiUrl}/business/${businessId}/employee/${empId}/tasks-status`
             }
             const { json, headers } = await httpClient(url, { ...options, user });
             
