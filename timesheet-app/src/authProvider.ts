@@ -1,6 +1,6 @@
 import { AuthProvider, HttpError } from "react-admin";
 import data from "./users.json";
-const publicURL = import.meta.env.VITE_LOCAL_PUBLIC_URL;
+const publicURL = import.meta.env.VITE_PUBLIC_URL;
 /**
  * This authProvider is only for test purposes. Don't use it in production.
  */

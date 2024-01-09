@@ -256,7 +256,7 @@ a {
     align-items: center;
     justify-content: space-between;
     height: 160px;
-    padding: 12px 5px;
+    padding: 15px 5px;
     background: rgb(0 0 0 / 55%);
     font-size: 26px;
     letter-spacing: 1px;
@@ -597,7 +597,7 @@ a {
         visibility: hidden;
    }
     .main-header__intro-wrapper {
-        padding: 0 30px;
+        padding: 20px 30px;
    }
     .header__menu {
         display: none;
