@@ -1,7 +1,7 @@
 import { fetchUtils, DataProvider } from 'react-admin';
 import { stringify } from 'query-string';
 
-const apiUrl = import.meta.env.VITE_LOCAL_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL;
 const httpClient = fetchUtils.fetchJson;
 
 type Identifier = string | number;

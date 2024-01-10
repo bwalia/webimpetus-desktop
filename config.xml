@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.timesheet.app" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>timesheetApp</name>
-    <description>Sample Apache Cordova App</description>
+<widget id="com.webimpetus.desktop" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Webimpetus Desktop</name>
+    <description>This is Webimpetus desktop App</description>
     <author email="dev@cordova.apache.org" href="https://cordova.apache.org">
         Apache Cordova Team
     </author>
@@ -10,5 +10,9 @@
     <allow-intent href="https://*/*" />
 <platform name="electron">
     <preference name="ElectronSettingsFilePath" value="res/electron/settings.json" />
+    <icon src="res/icon/smallLogo-nobg-xl.png" density="mdpi" />
+</platform>
+<platform name="android">
+    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
 </platform>
 </widget>
