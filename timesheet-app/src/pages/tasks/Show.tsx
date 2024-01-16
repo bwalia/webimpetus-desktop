@@ -21,12 +21,30 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ConfirmationBox from '../../component/ConfirmationBox';
 import TaskDetailsBox from '../../component/TaskDetailsBox';
 import dataProvider from '../../dataProvider';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const TaskTitle = () => {
     const record = useRecordContext();
     if (!record) return null;
     return <span>{record?.name || "Tasks"}</span>;
 }
+
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: '#FF0051',
+            // light: will be calculated from palette.primary.main,
+            // dark: will be calculated from palette.primary.main,
+            // contrastText: will be calculated to contrast with palette.primary.main
+        },
+        secondary: {
+            main: '#E0C2FF',
+            light: '#F5EBFF',
+            // dark: will be calculated from palette.secondary.main,
+            contrastText: '#47008F',
+        },
+    },
+});
 
 const Show = () => {
     const [isTracking, setIsTracking] = useState(false);
@@ -73,11 +91,11 @@ const Show = () => {
     useEffect(() => {
         if (taskUUID) {
             dataProvider.getList(taskUUID, {
-                pagination: {page: 1, perPage: 1000},
-                sort: {field: "name", order: 'ASC'},
+                pagination: { page: 1, perPage: 1000 },
+                sort: { field: "name", order: 'ASC' },
                 filter: {}
             }).then((timeslip: any) => {
-                console.log({timeslip});
+                console.log({ timeslip });
                 setTimeslipRecords(timeslip?.data);
             });
         }
@@ -145,7 +163,7 @@ const Show = () => {
         await dbService.deleteItem(taskUUID);
         await dataProvider.update(taskUUID, {
             id: taskUUID,
-            data: { 
+            data: {
                 status: "inReview",
                 id: taskUUID
             },
@@ -179,87 +197,97 @@ const Show = () => {
     };
 
     return (
-        <RaShow title={<TaskTitle />}>
-            <Grid container spacing={2} marginBottom={3} padding={3}>
-                {!isTracking && (
-                    <IconButton aria-label="delete" onClick={() => history.back()}>
-                        <ArrowBackIcon />
-                    </IconButton>
-                )}
-                <Grid item xs={12} justifyContent={"center"} display={"flex"}>
-                    <TextField source='name' variant='h4' />
-                </Grid>
-                <Grid item xs={4}>
-                    <Typography variant='body1'>Task Added on</Typography>
-                    <DateField source='created_at' variant='h6' label="Task Added on" />
-                </Grid>
-                <Grid item xs={4}>
-                    <Typography variant='body1'>Task Start Date</Typography>
-                    <DateField source='start_date' variant='h6' transform={(value: number) => new Date(value * 1000)} />
-                </Grid>
-                <Grid item xs={4}>
-                    <Typography variant='body1'>Task End Date</Typography>
-                    <DateField source='end_date' variant='h6' transform={(value: number) => new Date(value * 1000)} />
-                </Grid>
-                <Grid item xs={12}>
-                    {timeslipRecords instanceof Array && timeslipRecords?.map((timeslip: any) => (
-                        <Grid container spacing={2}>
-                            <Grid item xs={6}>
-                                <Typography variant='body1'>Previously Spent Time</Typography>
-                                <Typography variant='body1'>{timeslip?.slip_hours}</Typography>
+        <ThemeProvider theme={theme}>
+            <RaShow title={<TaskTitle />}>
+                <Grid container spacing={2} marginBottom={3} padding={3}>
+                    {!isTracking && (
+                        <IconButton aria-label="delete" onClick={() => history.back()}>
+                            <ArrowBackIcon />
+                        </IconButton>
+                    )}
+                    <Grid item xs={12} justifyContent={"center"} display={"flex"}>
+                        <TextField source='name' variant='h4' />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Typography variant='body1'>Task Added on</Typography>
+                        <DateField source='created_at' variant='h6' label="Task Added on" />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Typography variant='body1'>Task Start Date</Typography>
+                        <DateField source='start_date' variant='h6' transform={(value: number) => new Date(value * 1000)} />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Typography variant='body1'>Task End Date</Typography>
+                        <DateField source='end_date' variant='h6' transform={(value: number) => new Date(value * 1000)} />
+                    </Grid>
+                    <Grid item xs={12}>
+                        {timeslipRecords instanceof Array && timeslipRecords?.map((timeslip: any) => (
+                            <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                    <Typography variant='body1'>Previously Spent Time</Typography>
+                                    <Typography variant='body1'>{timeslip?.slip_hours}</Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Typography variant='body1'>Timesheet ID</Typography>
+                                    <Typography variant='body1'>{timeslip?.id}</Typography>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={6}>
-                                <Typography variant='body1'>Timesheet ID</Typography>
-                                <Typography variant='body1'>{timeslip?.id}</Typography>
-                            </Grid>
-                        </Grid>
-                    ))}
+                        ))}
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography variant='h6'>Task Description</Typography>
+                        <RichTextField source='description' variant='body1' />
+                    </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                    <Typography variant='h6'>Task Description</Typography>
-                    <RichTextField source='description' variant='body1' />
+                <Grid container justifyContent="center">
+                    <Grid item xs={6}>
+                        <Paper elevation={3}>
+                            <Box p={2}>
+                                <Typography variant="h6" textAlign={"center"}>
+                                    Time Tracker
+                                </Typography>
+                                <Typography variant="h4" textAlign={"center"}>
+                                    {secondsToHMS(elapsedTime)}
+                                </Typography>
+                                <Box
+                                    sx={{
+                                        display: 'grid',
+                                        gridTemplateColumns: { md: '1fr 1fr' },
+                                        gap: 2,
+                                    }}
+                                >
+                                    <Button
+                                        onClick={isTracking ? pauseTracking : startTracking}
+                                        variant="contained"
+                                        color={isTracking ? "secondary" : "primary"}
+                                        sx={isTracking ? { margin: 'auto', display: 'flex' } : {}}
+                                    >
+                                        {isTracking ? 'Pause' : 'Start'}
+                                    </Button>
+                                    {!isTracking && (
+                                        <Button onClick={finishTracking} variant="outlined" color="primary" sx={{ float: "right" }}>
+                                            Finish
+                                        </Button>
+                                    )}
+                                </Box>
+                            </Box>
+                        </Paper>
+                    </Grid>
                 </Grid>
-            </Grid>
-            <Grid container justifyContent="center">
-                <Grid item xs={6}>
-                    <Paper elevation={3}>
-                        <Box p={2}>
-                            <Typography variant="h6" textAlign={"center"}>
-                                Time Tracker
-                            </Typography>
-                            <Typography variant="h4" textAlign={"center"}>
-                                {secondsToHMS(elapsedTime)}
-                            </Typography>
-                            <Button 
-                                onClick={isTracking ? pauseTracking : startTracking} 
-                                variant="contained" 
-                                color={isTracking ? "secondary" : "primary"}
-                                sx={ isTracking ? {margin: 'auto', display: 'flex'} : {}}
-                            >
-                                {isTracking ? 'Pause' : 'Start'}
-                            </Button>
-                            {!isTracking && (
-                                <Button onClick={finishTracking} variant="outlined" color="primary" sx={{ float: "right" }}>
-                                    Finish
-                                </Button>
-                            )}
-                        </Box>
-                    </Paper>
-                </Grid>
-            </Grid>
-            <ConfirmationBox
-                isOpen={isConfirmationDialogOpen}
-                onClose={handleConfirmationCloseDialog}
-                innerText='Do you want to create an timeslip'
-                heading='Confirmation'
-                openDetails={handleDetailsOpenDialog}
-            />
-            <TaskDetailsBox
-                isOpen={isDetailsDialogOpen}
-                onClose={handleDetailsCloseDialog}
-                removeSessionData={removeSessionData}
-            />
-        </RaShow>
+                <ConfirmationBox
+                    isOpen={isConfirmationDialogOpen}
+                    onClose={handleConfirmationCloseDialog}
+                    innerText='Do you want to create an timeslip'
+                    heading='Confirmation'
+                    openDetails={handleDetailsOpenDialog}
+                />
+                <TaskDetailsBox
+                    isOpen={isDetailsDialogOpen}
+                    onClose={handleDetailsCloseDialog}
+                    removeSessionData={removeSessionData}
+                />
+            </RaShow>
+        </ThemeProvider>
     );
 }
 
