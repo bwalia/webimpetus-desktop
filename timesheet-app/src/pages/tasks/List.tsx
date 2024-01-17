@@ -25,7 +25,14 @@ const List = (props: any) => {
 
   return (
     <RaList
-      queryOptions={{ meta: { projectId: project ? project.uuid : '0' } }}
+      queryOptions={
+        {
+          meta: {
+            projectId: (project && project?.isProjects) ? project.uuid
+            : (project && project?.isAllBtasks) ? 'allTasks'
+            : '0'
+          }
+        }}
       {...props}
     >
       <BackButton />
@@ -33,7 +40,7 @@ const List = (props: any) => {
         primaryText={record => record.name}
         secondaryText={record => `Added on ${new Date(record.created_at).toLocaleDateString()}`}
         tertiaryText={<TertiaryText />}
-        linkType={"show"}
+        linkType={project?.isAllBtasks ? false : "show"}
         rowSx={record => ({ backgroundColor: record.nb_views >= 500 ? '#efe' : 'white' })}
       // onClick={handleProjects}
       />

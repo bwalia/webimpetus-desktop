@@ -14,5 +14,6 @@
 </platform>
 <platform name="android">
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    <icon src="res/icon/smallLogo-nobg-xl.png" density="mdpi" />
 </platform>
 </widget>

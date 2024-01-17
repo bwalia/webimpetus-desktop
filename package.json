@@ -7,7 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cd timesheet-app && npm run build && cd ../ && cordova prepare && cordova serve browser",
-    "electron": "cd timesheet-app && npm run build && cd ../ && cordova prepare && cordova run electron --nobuild"
+    "electron": "cd timesheet-app && npm run build && cd ../ && cordova prepare && cordova run electron --nobuild",
+    "prepare": "cd timesheet-app && npm run build && cd ../ && cordova prepare"
   },
   "keywords": [
     "ecosystem:cordova"

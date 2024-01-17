@@ -7,3 +7,7 @@
 .MuiToolbar-root div .MuiIconButton-root {
     color: rgba(0, 0, 0, 0.54);
 }
+
+.MuiToolbar-gutters.RaToolbar-mobileToolbar {
+    width: 20% !important;
+}
