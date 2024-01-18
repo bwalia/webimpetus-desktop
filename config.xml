@@ -8,6 +8,11 @@
     <content src="index.html" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <allow-navigation href="*" />
 <platform name="electron">
     <preference name="ElectronSettingsFilePath" value="res/electron/settings.json" />
     <icon src="res/icon/smallLogo-nobg-xl.png" density="mdpi" />
@@ -15,5 +20,20 @@
 <platform name="android">
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <icon src="res/icon/smallLogo-nobg-xl.png" density="mdpi" />
+    <preference name="AndroidInsecureFileModeEnabled" value="true" />
+    <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+    </edit-config>
 </platform>
+<platform name="ios">
+    <allow-intent href="itms:*" />
+    <allow-intent href="file:*" />
+    <allow-intent href="itms-apps:*" />
+    <preference name="AutoHideSplashScreen" value="true" />
+    <icon src="res/icon/smallLogo-nobg-xl.png" density="mdpi" />
+    <preference name="scheme" value="app" />
+    <preference name="hostname" value="localhost" />
+</platform>
+<feature name="StatusBar">
+    <param name="ios-package" onload="true" value="CDVStatusBar" />
+</feature>
 </widget>
