@@ -8,7 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cd timesheet-app && npm run build && cd ../ && cordova prepare && cordova serve browser",
     "electron": "cd timesheet-app && npm run build && cd ../ && cordova prepare && cordova run electron --nobuild",
-    "prepare": "cd timesheet-app && npm run build && cd ../ && cordova prepare"
+    "prepare": "cd timesheet-app && npm run build && cd ../ && cordova prepare",
+    "install-dependencies": "cd timesheet-app && npm install && cd ../ && npm install"
   },
   "keywords": [
     "ecosystem:cordova"
@@ -19,6 +20,7 @@
     "cordova-android": "^12.0.1",
     "cordova-browser": "^7.0.0",
     "cordova-electron": "^3.1.0",
+    "cordova-ios": "^7.0.1",
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-file": "^8.0.1"
   },
@@ -26,7 +28,8 @@
     "platforms": [
       "browser",
       "electron",
-      "android"
+      "android",
+      "ios"
     ],
     "plugins": {
       "cordova-plugin-dialogs": {},

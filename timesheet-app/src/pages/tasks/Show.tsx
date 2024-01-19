@@ -33,9 +33,6 @@ const theme = createTheme({
     palette: {
         primary: {
             main: '#FF0051',
-            // light: will be calculated from palette.primary.main,
-            // dark: will be calculated from palette.primary.main,
-            // contrastText: will be calculated to contrast with palette.primary.main
         },
         secondary: {
             main: '#E0C2FF',
@@ -174,13 +171,13 @@ const Show = () => {
 
     document.addEventListener("deviceready", onDeviceReady, false);
     function onDeviceReady() {
-        console.log("i'm ready");
         document.addEventListener("backbutton", onBackKeyDown, false);
     }
 
-    function onBackKeyDown() {
-        console.log("yeaaaaaahhhhhhh");
-
+    function onBackKeyDown(event: any) {
+        event.preventDefault();
+        notify('The back button has been disables temporary! Please use top back option');
+        return false;
     }
 
     const handleDetailsOpenDialog = () => {

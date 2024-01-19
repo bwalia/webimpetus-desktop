@@ -11,6 +11,7 @@ import Menu from "./Menu";
 import Dashboard from "./Dashboard";
 import AppBar from "./AppBar";
 import Login from "./Login";
+import ProjectIcon from '@mui/icons-material/AccountTree';
 import "./main.css"
 
 export const MyLayout = (props: any) => <Layout {...props} menu={Menu} appBar={AppBar} />;
@@ -24,6 +25,7 @@ export const App = () => (
   >
     <Resource
       name="projects"
+      icon={ProjectIcon}
       {...projects}
     />
     <Resource
