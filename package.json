@@ -8,7 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cd timesheet-app && npm run build && cd ../ && cordova prepare && cordova serve browser",
     "electron": "cd timesheet-app && npm run build && cd ../ && cordova prepare && cordova run electron --nobuild",
-    "prepare": "cd timesheet-app && npm run build && cd ../ && cordova prepare"
+    "prepare": "cd timesheet-app && npm run build && cd ../ && cordova prepare",
+    "install-dependencies": "cd timesheet-app && npm install && cd ../ && npm install"
   },
   "keywords": [
     "ecosystem:cordova"

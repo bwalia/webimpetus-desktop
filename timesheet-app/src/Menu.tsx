@@ -24,6 +24,7 @@ const Menu = () => {
                 <RaMenu>
                     <RaMenu.DashboardItem />
                     <RaMenu.ResourceItem name="projects" />
+                    <RaMenu.ResourceItem name="tasks" />
                 </RaMenu>
             )}
         </>
